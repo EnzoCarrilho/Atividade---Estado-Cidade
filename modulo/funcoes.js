@@ -35,29 +35,36 @@ const getEstadoBySigla = function(sigla){
 
     const uf = sigla.toUpperCase()
     estadoInfo = dados.listaDeEstados.estados.find(estado => estado.sigla === uf)
-    delete estadoInfo.cidades
 
-    let message = {status: true, status_code: 200, development: 'Enzo Felix Carrilho', estado: {}}
+    estado = {uf: estadoInfo.sigla, descricao: estadoInfo.nome, capital: estadoInfo.capital, regiao: estadoInfo.regiao}
 
-    estado.uf = estadoInfo.sigla
+    let message = {status: true, status_code: 200, development: 'Enzo Felix Carrilho', estado}
 
-    console.log(message)
+    // Object.keys cria um array do objeto estado, com os nomes dos atributos em String. 
+    // Sendo array é possível utilizar a função .length
+    let tamanhoJson = Object.keys(estado).length
 
-    //if(message.estado)
-        //return message 
-    //else
-        //return MESSAGE_ERROR 
+    if(tamanhoJson > 0)
+        return message 
+    else
+        return MESSAGE_ERROR 
 }
 
 //Retorna a Capital referente a um estado pesquisando pela sigla
 const getCapitalBySigla = function(sigla){
     const uf = sigla.toUpperCase()
-    estado = dados.listaDeEstados.estados.find(estado => estado.sigla === uf)
-    delete estado.cidades
-    delete estado.regiao
+    estadoInfo = dados.listaDeEstados.estados.find(estado => estado.sigla === uf)
+
+    estado = {uf: estadoInfo.sigla, descricao: estadoInfo.nome, capital: estadoInfo.capital}
 
     let message = {status: true, status_code: 200, development: 'Enzo Felix Carrilho', estado}
-    console.log(message)
+    
+    let tamanhoJson = Object.keys(estado).length
+
+    if(tamanhoJson > 0)
+        return message 
+    else
+        return MESSAGE_ERROR 
     
 }
 
@@ -72,24 +79,64 @@ const getEstadosByRegiao = function(regiao){
         message.estados.push({uf: estado.sigla, descricao: estado.nome})
     })
 
-    console.log(message)
+    if(message.estados.length > 0)
+        return message
+    else
+        return MESSAGE_ERROR
 }
 
 //Retorna uma lista de estados referente as capitais do país
 const getVerifyCapitaisDoPais = function(){
+    estadosCapital = dados.listaDeEstados.estados.filter(estado => 'capital_pais' in estado)
+    
+    let message = {status: true, status_code: 200, development: 'Enzo Felix Carrilho', capitais: []}
+
+    estadosCapital.forEach((estado) => {
+        message.capitais.push({capital_atual: estado.capital_pais.capital, uf: estado.sigla, descricao: estado.nome, 
+        capital: estado.capital, regiao: estado.regiao, capital_pais_ano_inicio: estado.capital_pais.ano_inicio,
+        capital_pais_ano_termino: estado.capital_pais.ano_fim})
+    })
+
+    if(message.capitais.length > 0)
+        return message
+    else
+        return MESSAGE_ERROR
 
 }
 
 //Retorna uma lista de Cidades pesquisando pela sigla do Estado
 const getCidadesBySigla = function(sigla){
+    const uf = sigla.toUpperCase()
+    estadoInfo = dados.listaDeEstados.estados.find(estado => estado.sigla === uf)
+    quantidadeDeCidades = estadoInfo.cidades.length
+
+    estado = {uf: estadoInfo.sigla, descricao: estadoInfo.nome, quantidade_cidades: quantidadeDeCidades, cidades: []}
+
+    estadoInfo.cidades.forEach((cidade) => {
+        estado.cidades.push(cidade.nome)
+    })
+
+    let message = {status: true, status_code: 200, development: 'Enzo Felix Carrilho', estado}
+
+    if(estado.cidades.length > 0)
+        return message
+    else
+        return MESSAGE_ERROR
 
 }
 
 module.exports = {
     getAllEstados,
     getEstadoBySigla,
+    getCapitalBySigla,
+    getEstadosByRegiao,
+    getVerifyCapitaisDoPais,
+    getCidadesBySigla
 }
+
 
 //getEstadoBySigla('sp')
 //getCapitalBySigla('sp')
-getEstadosByRegiao('Sul')
+//getEstadosByRegiao('Sul')
+//getVerifyCapitaisDoPais()
+//getCidadesBySigla('sp')
